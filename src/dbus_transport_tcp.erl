@@ -5,7 +5,7 @@
 %% @author Tony Wallace <tony@tony.gen.nz> - added comments to code
 %% @doc Implements D-Bus connection over TCP
 %% This is done by starting a gen_server in response to a connect/3
-%% 
+%%
 %% Once started this server accepts the following calls:
 %%   gen_server:call(ServerRef,support_unix_fd) -> false
 %%   gen_server:call(ServerRef,{set_raw,true}) -> ok
@@ -48,8 +48,8 @@
 %% Options are the gen_tcp:connect options for the link
 %% @end
 -type host() :: [inet:socket_address()|inet:hostname()].
--type connect_options() :: [get_tcp:connect_option()].
--spec connect(host(),integer(),connect_options()) -> 
+-type connect_options() :: [gen_tcp:connect_option()].
+-spec connect(host(),integer(),connect_options()) ->
 		     {ok,pid()} | ignore | {error,{already_started,pid()} | term()}.
 connect(Host, Port, Options) ->
     gen_server:start_link(?MODULE, [Host, Port, Options, self()], []).
@@ -62,7 +62,7 @@ init([Host, Port, Options, Owner]) ->
     case gen_tcp:connect(Host, Port, Options) of
 	{ok, Sock} ->
 	    ok = inet:setopts(Sock, [{keepalive, true},
-				     {active, once}, 
+				     {active, once},
 				     binary]),
 	    {ok, #state{sock=Sock, owner=Owner}};
 	{error, Err} ->
