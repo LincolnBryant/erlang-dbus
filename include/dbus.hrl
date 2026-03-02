@@ -18,8 +18,8 @@
 -endif.
 
 -ifndef(warn).
--define(warn(Msg), logger:warn(Msg)).
--define(warn(Msg, Data), logger:warn(Msg, Data)).
+-define(warn(Msg), logger:warning(Msg)).
+-define(warn(Msg, Data), logger:warning(Msg, Data)).
 -endif.
 
 -ifndef(error).
