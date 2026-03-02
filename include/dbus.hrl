@@ -8,23 +8,23 @@
 -define(dbus_hrl, true).
 
 -ifndef(debug).
--define(debug(Msg), logger:info_msg(Msg)).
--define(debug(Msg, Data), logger:info_msg(Msg, Data)).
+-define(debug(Msg), logger:info(Msg)).
+-define(debug(Msg, Data), logger:info(Msg, Data)).
 -endif.
 
 -ifndef(info).
--define(info(Msg), logger:info_msg(Msg)).
--define(info(Msg, Data), logger:info_msg(Msg, Data)).
+-define(info(Msg), logger:info(Msg)).
+-define(info(Msg, Data), logger:info(Msg, Data)).
 -endif.
 
 -ifndef(warn).
--define(warn(Msg),logger:warning_msg(Msg)).
--define(warn(Msg, Data), logger:warning_msg(Msg, Data)).
+-define(warn(Msg),logger:warn(Msg)).
+-define(warn(Msg, Data), logger:warn(Msg, Data)).
 -endif.
 
 -ifndef(error).
--define(error(Msg), logger:error_msg(Msg)).
--define(error(Msg, Data), logger:error_msg(Msg, Data)).
+-define(error(Msg), logger:error(Msg)).
+-define(error(Msg, Data), logger:error(Msg, Data)).
 -endif.
 
 -define(DBUS_VERSION_MAJOR, 1).
