@@ -24,17 +24,18 @@
 
 -behaviour(gen_server).
 
-
 %% api
 -export([connect/3]).
 
 %% gen_server callbacks
--export([init/1,
-	 code_change/3,
-	 handle_call/3,
-	 handle_cast/2,
-	 handle_info/2,
-	 terminate/2]).
+-export([
+    init/1,
+    code_change/3,
+    handle_call/3,
+    handle_cast/2,
+    handle_info/2,
+    terminate/2
+]).
 
 -record(state, {sock, owner}).
 
@@ -47,10 +48,10 @@
 %% @param Options
 %% Options are the gen_tcp:connect options for the link
 %% @end
--type host() :: [inet:socket_address()|inet:hostname()].
+-type host() :: [inet:socket_address() | inet:hostname()].
 -type connect_options() :: [gen_tcp:connect_option()].
--spec connect(host(),integer(),connect_options()) ->
-		     {ok,pid()} | ignore | {error,{already_started,pid()} | term()}.
+-spec connect(host(), integer(), connect_options()) ->
+    {ok, pid()} | ignore | {error, {already_started, pid()} | term()}.
 connect(Host, Port, Options) ->
     gen_server:start_link(?MODULE, [Host, Port, Options, self()], []).
 
@@ -60,65 +61,56 @@ connect(Host, Port, Options) ->
 init([Host, Port, Options, Owner]) ->
     true = link(Owner),
     case gen_tcp:connect(Host, Port, Options) of
-	{ok, Sock} ->
-	    ok = inet:setopts(Sock, [{keepalive, true},
-				     {active, once},
-				     binary]),
-	    {ok, #state{sock=Sock, owner=Owner}};
-	{error, Err} ->
-	    ?error("Error opening socket: ~p~n", [Err]),
-	    {error, Err}
+        {ok, Sock} ->
+            ok = inet:setopts(Sock, [
+                {keepalive, true},
+                {active, once},
+                binary
+            ]),
+            {ok, #state{sock = Sock, owner = Owner}};
+        {error, Err} ->
+            ?error("Error opening socket: ~p~n", [Err]),
+            {error, Err}
     end.
 
 code_change(_OldVsn, State, _Extra) ->
     {ok, State}.
 
-
 handle_call(support_unix_fd, _From, State) ->
     {reply, false, State};
-
-handle_call({set_raw, true}, _From, #state{sock=Sock}=State) ->
+handle_call({set_raw, true}, _From, #state{sock = Sock} = State) ->
     ok = inet:setopts(Sock, [{packet, raw}]),
     {reply, ok, State};
-
 handle_call(Request, _From, State) ->
     ?error("Unhandled call in ~p: ~p~n", [?MODULE, Request]),
     {reply, ok, State}.
 
-
-handle_cast({send, Data}, #state{sock=Sock}=State) ->
+handle_cast({send, Data}, #state{sock = Sock} = State) ->
     gen_tcp:send(Sock, Data),
     {noreply, State};
-
 handle_cast(close, State) ->
     ok = gen_tcp:close(State#state.sock),
-    {stop, normal, State#state{sock=undefined}};
-
+    {stop, normal, State#state{sock = undefined}};
 handle_cast(stop, State) ->
     {stop, normal, State};
-
 handle_cast(Request, State) ->
     ?error("Unhandled cast in ~p: ~p~n", [?MODULE, Request]),
     {noreply, State}.
 
-
-handle_info({tcp, Sock, Data}, #state{sock=Sock, owner=Owner}=State) ->
+handle_info({tcp, Sock, Data}, #state{sock = Sock, owner = Owner} = State) ->
     Owner ! {received, Data},
     ok = inet:setopts(Sock, [{active, once}]),
     {noreply, State};
-
-handle_info({tcp_closed, Sock}, #state{sock=Sock, owner=Owner}=State) ->
+handle_info({tcp_closed, Sock}, #state{sock = Sock, owner = Owner} = State) ->
     Owner ! closed,
     {stop, normal, State};
-
 handle_info(Info, State) ->
     ?error("Unhandled info in ~p: ~p~n", [?MODULE, Info]),
     {noreply, State}.
 
-
-terminate(_Reason, #state{sock=Sock}) ->
+terminate(_Reason, #state{sock = Sock}) ->
     case Sock of
-	undefined -> ignore;
-	_ -> gen_tcp:close(Sock)
+        undefined -> ignore;
+        _ -> gen_tcp:close(Sock)
     end,
     terminated.

@@ -1,7 +1,7 @@
 %% @copyright (C) 2014, Jean Parpaillon
 %% @author Jean Parpaillon <jean.parpaillon@free.fr>
 %% @doc Defines callbacks for implemeting an SASL authentication
-%% mechanism. Authentication state machine is implemented in 
+%% mechanism. Authentication state machine is implemented in
 %% @see dbus_peer_conection.
 %%
 %% ```-callback init() ->
@@ -32,11 +32,11 @@
 -module(dbus_auth).
 
 -callback init() ->
-    {ok, Resp :: binary()} |
-    {continue, Resp :: binary(), State :: term()} |
-    {error, term()}.
+    {ok, Resp :: binary()}
+    | {continue, Resp :: binary(), State :: term()}
+    | {error, term()}.
 
 -callback challenge(Chall :: binary(), State :: term()) ->
-    {ok, Resp :: binary()} |
-    {continue, Resp :: binary(), State :: term()} |
-    {error, Reason :: term()}.
+    {ok, Resp :: binary()}
+    | {continue, Resp :: binary(), State :: term()}
+    | {error, Reason :: term()}.

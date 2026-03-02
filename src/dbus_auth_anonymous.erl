@@ -13,15 +13,16 @@
 -behaviour(dbus_auth).
 
 %% dbus_auth callbacks
--export([init/0,
-         challenge/2]).
+-export([
+    init/0,
+    challenge/2
+]).
 
 %% @doc Init ANONYMOUS mechanism
 %% @end
 -spec init() -> {ok, binary()}.
 init() ->
     {ok, <<"ANONYMOUS">>}.
-
 
 %% @doc Not implemented: ANONYMOUS does not require challenge
 %% @end

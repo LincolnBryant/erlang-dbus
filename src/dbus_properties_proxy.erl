@@ -1,6 +1,6 @@
 %%% @author Jean Parpaillon <jean.parpaillon@free.fr>
 %%% @copyright (C) 2015, Jean Parpaillon
-%%% @doc Specific methods for a proxy of an object implementing 
+%%% @doc Specific methods for a proxy of an object implementing
 %%% 'org.freedesktop.DBus.Properties' interface.
 %%%
 %%% See <a href="https://dbus.freedesktop.org/doc/dbus-specification.html#standard-interfaces-properties">D-Bus specification</a>
@@ -12,22 +12,23 @@
 -include("dbus_client.hrl").
 -include("dbus_properties.hrl").
 
--export([get/3,
-         set/4,
-         get_all/2,
-         connect/2]).
-
+-export([
+    get/3,
+    set/4,
+    get_all/2,
+    connect/2
+]).
 
 %% @doc Get a property value
 %% @end
 -spec get(Proxy :: dbus_proxy:t(), Iface :: dbus_name(), Prop :: dbus_name()) -> term().
 get(Proxy, Iface, Prop) ->
     case dbus_proxy:call(Proxy, ?DBUS_IFACE_PROPERTIES, <<"Get">>, [Iface, Prop]) of
-        {ok, Value} -> 
-	    Value;
-        {error, Err} -> throw(Err)
+        {ok, Value} ->
+            Value;
+        {error, Err} ->
+            throw(Err)
     end.
-
 
 %% @doc Set a property value
 %% @end
@@ -38,7 +39,6 @@ set(Proxy, Iface, Prop, Value) ->
         {error, Err} -> throw(Err)
     end.
 
-
 %% @doc Get a key-value list of properties
 %% @end
 -spec get_all(Proxy :: dbus_proxy:t(), Iface :: dbus_name()) -> [{dbus_name(), dbus_variant()}].
@@ -47,7 +47,6 @@ get_all(Proxy, Iface) ->
         {ok, [Props]} -> Props;
         {error, Err} -> throw(Err)
     end.
-
 
 %% @doc Connect to the 'PropertiesChanged' signal.
 %% @end

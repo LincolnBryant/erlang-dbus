@@ -12,7 +12,7 @@
 %%
 %% While unix socket and TCP transports are the commonly used transports,
 %% <a href="https://dbus.freedesktop.org/doc/dbus-specification.html#transports" >D-Bus specification</a>
-%% describes additional transports. 
+%% describes additional transports.
 %%
 %% @todo Implements remaining transports: launchd, systemd, nonce-secured TCP, unixexec, kernel
 %% @end
@@ -28,13 +28,11 @@
 close(Conn) ->
     gen_server:cast(Conn, close).
 
-
 %% @doc Send data to a transport
 %% @end
 -spec send(pid(), binary()) -> ok.
-send(Conn, Data) -> 
+send(Conn, Data) ->
     gen_server:cast(Conn, {send, Data}).
-
 
 %% @doc Set transport in raw mode (used after authentication is done)
 %% @end
@@ -42,16 +40,14 @@ send(Conn, Data) ->
 set_raw(Conn, Raw) ->
     gen_server:call(Conn, {set_raw, Raw}).
 
-
 %% @doc Stop transport
 %% @end
 -spec stop(pid()) -> ok.
 stop(Conn) ->
     gen_server:cast(Conn, stop).
 
-
 %% @doc Check if this transport support UNIX FD passing
-%% 
+%%
 %% @end
 -spec support_unix_fd(pid()) -> boolean().
 support_unix_fd(Conn) ->
