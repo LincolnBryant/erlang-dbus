@@ -78,25 +78,15 @@ connect(BusName) when
     connect(get_bus_id(BusName)).
 
 connect(#bus_id{} = BusId, ServiceReg) ->
-    case dbus_peer_connection:start_link(BusId, ServiceReg) of
-        {ok, {dbus_peer_connection, PConn} = Conn} ->
-            case dbus_peer_connection:auth(PConn) of
-                {ok, undefined} ->
-                    case dbus_proxy:start_link(Conn, ?DBUS_SERVICE, <<"/">>, ?DBUS_NODE) of
-                        {ok, DBus} ->
-                            ConnId = hello(DBus),
-                            ?debug("Hello connection id: ~p~n", [ConnId]),
-                            dbus_peer_connection:set_unique_name(PConn, ConnId),
-                            dbus_peer_connection:set_controlling_process(PConn, DBus),
-                            {ok, {?MODULE, DBus}};
-                        {error, Err} ->
-                            {error, Err}
-                    end;
-                {error, Err} ->
-                    {error, Err}
-            end;
-        {error, Err} ->
-            {error, Err}
+    maybe
+        {ok, {dbus_peer_connection, PConn} = Conn} ?= dbus_peer_connection:start_link(BusId, ServiceReg),
+        {ok, undefined} ?= dbus_peer_connection:auth(PConn),
+        {ok, DBus} ?= dbus_proxy:start_link(Conn, ?DBUS_SERVICE, <<"/">>, ?DBUS_NODE),
+        ConnId = hello(DBus),
+        ?debug("Hello connection id: ~p~n", [ConnId]),
+        dbus_peer_connection:set_unique_name(PConn, ConnId),
+        dbus_peer_connection:set_controlling_process(PConn, DBus),
+        {ok, {?MODULE, DBus}}
     end;
 connect(BusName, ServiceReg) when
     BusName =:= system;
