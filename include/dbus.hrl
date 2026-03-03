@@ -120,7 +120,7 @@
 -type dbus_variant() :: #dbus_variant{}.
 
 -record(dbus_node, {
-    name :: binary(),
+    name :: binary() | undefined,
     elements = [] :: [dbus_node()],
     % gb_tree()
     interfaces :: term()
@@ -165,7 +165,7 @@
 -record(dbus_signal, {
     name :: dbus_name(),
     args = [] :: [dbus_arg()],
-    result :: none | dbus_arg(),
+    result :: none | undefined | dbus_arg(),
     out_sig :: binary() | undefined,
     out_types :: dbus_signature() | undefined,
     annotations = [] :: [dbus_annotation()]
@@ -182,7 +182,7 @@
 
 -record(dbus_arg, {
     name = <<>> :: dbus_name(),
-    direction :: in | out,
+    direction :: in | out | undefined,
     type :: iolist() | binary()
 }).
 -type dbus_arg() :: #dbus_arg{}.
