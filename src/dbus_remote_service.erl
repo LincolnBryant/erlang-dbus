@@ -151,7 +151,7 @@ handle_release_object(Object, Pid, #state{objects = Reg} = State) ->
                     end;
                 false ->
                     % Pid was not in Pids
-                    {error, not_resgitered, State}
+                    {error, not_registered, State}
             end;
         [] ->
             {error, not_registered, State}
